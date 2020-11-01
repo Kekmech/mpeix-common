@@ -16,7 +16,7 @@ CREATE TABLE mpeix.map_markers
 COMMENT ON TABLE mpeix.map_markers IS 'Таблица маркеров на карте';
 COMMENT ON COLUMN mpeix.map_markers.id IS 'Идентификатор маркера';
 COMMENT ON COLUMN mpeix.map_markers.place_uid IS 'Идентификатор локации';
-COMMENT ON COLUMN mpeix.map_markers.address IS 'Адресс локации';
+COMMENT ON COLUMN mpeix.map_markers.address IS 'Адрес локации';
 COMMENT ON COLUMN mpeix.map_markers.lat IS 'Широта точки';
 COMMENT ON COLUMN mpeix.map_markers.lng IS 'Долгота точки';
 COMMENT ON COLUMN mpeix.map_markers.place_name IS 'Название локации';
