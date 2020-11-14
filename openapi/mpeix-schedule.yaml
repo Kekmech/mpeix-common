@@ -1,0 +1,225 @@
+openapi: 3.0.0
+info:
+  description: |
+    Mpeix service responsible for the schedule
+  version: "1.0.0"
+  title: Schedule
+  contact:
+    name: KekMech
+    url: https://vk.com/kekmech
+  license:
+    name: MIT
+    url: 'https://opensource.org/licenses/MIT'
+
+tags:
+  - name: group
+paths:
+  /getGroupId:
+    post:
+      summary: Get a group number by group name
+      requestBody:
+        $ref: '#/components/requestBodies/GetGroupIdRequest'
+      responses:
+        '200':
+          description: Found group number
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetGroupIdResponse'
+        '422':
+          description: Group number not found
+        '500':
+          description: Internal server error
+      deprecated: true
+
+  /getGroupSchedule:
+    post:
+      summary: Get a group schedule by group number
+      requestBody:
+        $ref: '#/components/requestBodies/GetScheduleByGroupRequest'
+      responses:
+        '200':
+          description: Schedule for a group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Schedule'
+        '422':
+          description: Schedule not found
+        '500':
+          description: Internal server error
+      deprecated: true
+
+  /health:
+    get:
+      summary: will check service is healthy or not
+      responses:
+        '200':
+          description: Service is healthy
+        '500':
+          description: Service is unhealthy
+
+  /v1/group/{groupName}/id:
+    get:
+      tags:
+        - group
+      summary: Get a group id by group name
+      parameters:
+        - name: groupName
+          in: path
+          description: name of a group
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Found group id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetGroupIdResponse'
+        '422':
+          description: Group id not found
+        '500':
+          description: Internal server error
+
+  /v1/group/{groupId}/schedule/{offset}:
+    get:
+      tags:
+        - group
+      summary: Get a schedule for group by $groupId
+      parameters:
+        - name: groupId
+          in: path
+          description: groupId
+          required: true
+          schema:
+            type: string
+        - name: offset
+          in: path
+          description: offset
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Schedule for a group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Schedule'
+        '422':
+          description: Schedule not found
+        '500':
+          description: Internal server error
+components:
+  schemas:
+    Time:
+      type: object
+      properties:
+        start:
+          type: string
+          example: 00:00:00
+        end:
+          type: string
+          example: 04:20:00
+
+    Class:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+          enum:
+            - "UNDEFINED"
+            - "LECTURE"
+            - "PRACTICE"
+            - "LAB"
+            - "COURSE"
+        place:
+          type: string
+        groups:
+          type: string
+        person:
+          type: string
+        number:
+          type: integer
+          format: int32
+        time:
+          $ref: "#/components/schemas/Time"
+
+
+    Day:
+      type: object
+      properties:
+        dayOfWeek:
+          type: integer
+          format: int32
+        date:
+          type: string
+          format: date
+        classes:
+          type: array
+          items:
+            $ref: "#/components/schemas/Class"
+
+    Week:
+      type: object
+      properties:
+        weekOfYear:
+          type: integer
+          format: int32
+        weekOfSemester:
+          type: integer
+          format: int32
+        firstDayOfWeek:
+          type: string
+          format: date
+        days:
+          type: array
+          items:
+            $ref: "#/components/schemas/Day"
+
+    Schedule:
+      type: object
+      properties:
+        groupNumber:
+          type: string
+        groupId:
+          type: string
+        weeks:
+          type: array
+          items:
+            $ref: "#/components/schemas/Week"
+
+    GetGroupIdResponse:
+      type: object
+      properties:
+        groupNumber:
+          type: string
+        groupId:
+          type: string
+
+  requestBodies:
+    GetGroupIdRequest:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              groupNumber:
+                type: string
+
+    GetScheduleByGroupRequest:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              groupNumber:
+                type: string
+              weekOffset:
+                type: integer
+                format: int32
