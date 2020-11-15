@@ -1,7 +1,6 @@
 openapi: 3.0.0
 info:
-  description: |
-    Mpeix service responsible for the schedule
+  description: Mpeix microservice responsible for the schedule
   version: "1.0.0"
   title: Schedule
   contact:
@@ -16,18 +15,18 @@ tags:
 paths:
   /getGroupId:
     post:
-      summary: Get a group number by group name
+      summary: Get a group id by group number
       requestBody:
         $ref: '#/components/requestBodies/GetGroupIdRequest'
       responses:
         '200':
-          description: Found group number
+          description: Found group id
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetGroupIdResponse'
         '422':
-          description: Group number not found
+          description: Group id not found
         '500':
           description: Internal server error
       deprecated: true
@@ -59,18 +58,19 @@ paths:
         '500':
           description: Service is unhealthy
 
-  /v1/group/{groupName}/id:
+  /v1/group/{groupNumber}/id:
     get:
       tags:
         - group
-      summary: Get a group id by group name
+      summary: Get a group id by group number
       parameters:
-        - name: groupName
+        - name: groupNumber
           in: path
-          description: name of a group
+          description: number of a group
           required: true
           schema:
             type: string
+          example: "А-01-16"
       responses:
         '200':
           description: Found group id
@@ -83,18 +83,19 @@ paths:
         '500':
           description: Internal server error
 
-  /v1/group/{groupId}/schedule/{offset}:
+  /v1/group/{groupNumber}/schedule/{offset}:
     get:
       tags:
         - group
-      summary: Get a schedule for group by $groupId
+      summary: Get a schedule for group by group number
       parameters:
-        - name: groupId
+        - name: groupNumber
           in: path
-          description: groupId
+          description: number of a group
           required: true
           schema:
             type: string
+            example: "А-01-16"
         - name: offset
           in: path
           description: offset
@@ -113,6 +114,7 @@ paths:
           description: Schedule not found
         '500':
           description: Internal server error
+
 components:
   schemas:
     Time:
@@ -149,7 +151,6 @@ components:
           format: int32
         time:
           $ref: "#/components/schemas/Time"
-
 
     Day:
       type: object
@@ -199,8 +200,10 @@ components:
       properties:
         groupNumber:
           type: string
+          example: "А-01-16"
         groupId:
           type: string
+          example: "9378"
 
   requestBodies:
     GetGroupIdRequest:
@@ -211,6 +214,7 @@ components:
             properties:
               groupNumber:
                 type: string
+                example: "А-01-16"
 
     GetScheduleByGroupRequest:
       content:
@@ -220,6 +224,7 @@ components:
             properties:
               groupNumber:
                 type: string
+                example: "А-01-16"
               weekOffset:
                 type: integer
                 format: int32
