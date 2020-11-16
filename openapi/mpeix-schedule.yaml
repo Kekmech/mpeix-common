@@ -58,31 +58,6 @@ paths:
         '500':
           description: Service is unhealthy
 
-  /v1/group/{groupNumber}/id:
-    get:
-      tags:
-        - group
-      summary: Get a group id by group number
-      parameters:
-        - name: groupNumber
-          in: path
-          description: number of a group
-          required: true
-          schema:
-            type: string
-          example: "А-01-16"
-      responses:
-        '200':
-          description: Found group id
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetGroupIdResponse'
-        '422':
-          description: Group id not found
-        '500':
-          description: Internal server error
-
   /v1/group/{groupNumber}/schedule/{offset}:
     get:
       tags:
