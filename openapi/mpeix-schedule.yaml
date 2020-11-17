@@ -12,6 +12,9 @@ info:
 
 tags:
   - name: group
+    description: endpoints for group information
+  - name: system
+    description: endpoints with system information
 paths:
   /getGroupId:
     post:
@@ -49,8 +52,10 @@ paths:
           description: Internal server error
       deprecated: true
 
-  /health:
+  /system/health:
     get:
+      tags:
+        - systems
       summary: will check service is healthy or not
       responses:
         '200':
