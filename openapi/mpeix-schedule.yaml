@@ -55,7 +55,7 @@ paths:
   /system/health:
     get:
       tags:
-        - systems
+        - system
       summary: will check service is healthy or not
       responses:
         '200':
