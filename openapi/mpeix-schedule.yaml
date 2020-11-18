@@ -67,7 +67,8 @@ paths:
     get:
       tags:
         - group
-      summary: Get a schedule for group by group number
+      summary: getScheduleByGroupNumber
+      description: Get a schedule for group by group number
       parameters:
         - name: groupNumber
           in: path
