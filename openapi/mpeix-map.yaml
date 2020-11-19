@@ -91,8 +91,33 @@ paths:
             type: integer
             format: int32
       responses:
-        '201':
-          description: Marker created
+        '200':
+          description: Marker updated
+        '404':
+          description: Marker not found
+        '500':
+          description: Internal server error
+
+    delete:
+      tags:
+        - marker
+      summary: DeleteMapMarker
+      description: Delete map marker
+      security:
+        - api_key: []
+      parameters:
+        - name: markerId
+          in: path
+          description: id of marker to delete
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Marker deleted
+        '404':
+          description: Marker not found
         '500':
           description: Internal server error
 
