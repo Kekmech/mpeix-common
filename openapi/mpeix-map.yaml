@@ -45,7 +45,8 @@ paths:
     get:
       tags:
         - marker
-      summary: Get a list of map markers
+      summary: GetMapMarkers
+      description: Get a list of map markers
       responses:
         '200':
           description: Found map markers
@@ -59,7 +60,8 @@ paths:
     post:
       tags:
         - marker
-      summary: Create a new map marker
+      summary: CreateMapMarker
+      description: Create a new map marker
       security:
         - api_key: []
       requestBody:
@@ -74,7 +76,8 @@ paths:
     put:
       tags:
         - marker
-      summary: Update map marker
+      summary: UpdateMapMarker
+      description: Update map marker
       security:
         - api_key: []
       requestBody:
@@ -99,6 +102,7 @@ components:
       type: "apiKey"
       name: "API_KEY"
       in: "header"
+
   schemas:
     GetMapMarkersResponse:
       type: object
