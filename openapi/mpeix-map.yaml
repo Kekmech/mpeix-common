@@ -1,0 +1,172 @@
+openapi: 3.0.0
+info:
+  description: Mpeix microservice responsible for the map
+  version: "1.0.0"
+  title: Map
+  contact:
+    name: KekMech
+    url: https://vk.com/kekmech
+  license:
+    name: MIT
+    url: 'https://opensource.org/licenses/MIT'
+
+tags:
+  - name: marker
+    description: endpoints for markers information
+  - name: system
+    description: endpoints with system information
+paths:
+  /getMapMarkers:
+    get:
+      summary: Get a list of map markers
+      responses:
+        '200':
+          description: Found map markers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetMapMarkersResponse'
+        '500':
+          description: Internal server error
+      deprecated: true
+
+  /system/health:
+    get:
+      tags:
+        - system
+      summary: will check service is healthy or not
+      responses:
+        '200':
+          description: Service is healthy
+        '500':
+          description: Service is unhealthy
+
+  /v1/marker:
+    get:
+      tags:
+        - marker
+      summary: Get a list of map markers
+      responses:
+        '200':
+          description: Found map markers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetMapMarkersResponse'
+        '500':
+          description: Internal server error
+
+    post:
+      tags:
+        - marker
+      summary: Create a new map marker
+      security:
+        - api_key: []
+      requestBody:
+        $ref: '#/components/requestBodies/MapMarkerRequest'
+      responses:
+        '201':
+          description: Marker created
+        '500':
+          description: Internal server error
+
+  /v1/marker/{markerId}:
+    put:
+      tags:
+        - marker
+      summary: Update map marker
+      security:
+        - api_key: []
+      requestBody:
+        $ref: '#/components/requestBodies/MapMarkerRequest'
+      parameters:
+        - name: markerId
+          in: path
+          description: id of marker to update
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '201':
+          description: Marker created
+        '500':
+          description: Internal server error
+
+components:
+  securitySchemes:
+    api_key:
+      type: "apiKey"
+      name: "API_KEY"
+      in: "header"
+  schemas:
+    GetMapMarkersResponse:
+      type: object
+      properties:
+        markers:
+          type: array
+          items:
+            $ref: "#/components/schemas/MapMarker"
+
+    MapMarker:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        uid:
+          type: string
+        address:
+          type: string
+        location:
+          $ref: "#/components/schemas/Location"
+        name:
+          type: string
+        type:
+          $ref: "#/components/schemas/MarkerType"
+        icon:
+          type: string
+        tag:
+          type: string
+
+    MarkerType:
+      type: string
+      enum:
+        - "FOOD"
+        - "BUILDING"
+        - "HOSTEL"
+        - "OTHER"
+        - "STRUCTURE"
+        - "UNDEFINED"
+
+    Location:
+      type: object
+      properties:
+        lat:
+          type: number
+          format: double
+        lng:
+          type: number
+          format: double
+
+  requestBodies:
+    MapMarkerRequest:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              uid:
+                type: string
+              address:
+                type: string
+              location:
+                $ref: "#/components/schemas/Location"
+              name:
+                type: string
+              type:
+                $ref: "#/components/schemas/MarkerType"
+              icon:
+                type: string
+              tag:
+                type: string
