@@ -96,6 +96,28 @@ paths:
         '500':
           description: Internal server error
 
+  /v1/group/{groupNumber}/session:
+    get:
+      tags:
+        - group
+      summary: GetSessionByGroupNumber
+      description: Get a session schedule for group by group number
+      parameters:
+        - name: groupNumber
+          in: path
+          description: number of a group
+          required: true
+          schema:
+            type: string
+            example: "А-01-16"
+      responses:
+        '200':
+          description: Session schedule for a group
+        '422':
+          description: Session schedule not found
+        '500':
+          description: Internal server error
+
 components:
   schemas:
     Time:
