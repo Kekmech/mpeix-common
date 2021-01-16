@@ -124,6 +124,66 @@ paths:
         '500':
           description: Internal server error
 
+  /v1/person/{personName}/schedule/{offset}:
+    get:
+      tags:
+        - person
+      summary: GetScheduleByPersonName
+      description: Get a person schedule for group by group number
+      parameters:
+        - name: personName
+          in: path
+          description: Person name
+          required: true
+          schema:
+            type: string
+            example: "Зуев Юрий Юрьевич"
+        - name: offset
+          in: path
+          description: Offset or range of offsets separated by a double dots. If you want to get the current week's schedule, pass offset equal to zero
+          required: true
+          schema:
+            type: string
+            example: "-1..1"
+      responses:
+        '200':
+          description: Schedule for a person, for weeks specified in offset
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduleV1'
+        '422':
+          description: Schedule not found
+        '500':
+          description: Internal server error
+
+  /v1/person/{personName}/session:
+    get:
+      tags:
+        - person
+      summary: GetSessionByPersonName
+      description: Get a person session schedule for group by group number
+      parameters:
+        - name: personName
+          in: path
+          description: Person name
+          required: true
+          schema:
+            type: string
+            example: "Зуев Юрий Юрьевич"
+      responses:
+        '200':
+          description: Person session schedule for a group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetSessionResponseV1'
+        '422':
+          description: Session schedule not found
+        '500':
+          description: Internal server error
+
+
 components:
   schemas:
     Time:
@@ -259,8 +319,9 @@ components:
     ScheduleV1:
       type: object
       properties:
-        groupNumber:
+        ownerName:
           type: string
+          description: group number or person name
         groupId:
           type: string
         weeks:
