@@ -235,33 +235,10 @@ components:
             - "PRACTICE"
             - "LAB"
             - "COURSE"
-        place:
-          type: string
-        groups:
-          type: string
-        person:
-          type: string
-        number:
-          type: integer
-          format: int32
-        time:
-          $ref: "#/components/schemas/Time"
-
-    ClassesV1:
-      type: object
-      properties:
-        name:
-          type: string
-        type:
-          type: string
-          enum:
-            - "UNDEFINED"
-            - "LECTURE"
-            - "PRACTICE"
-            - "LAB"
-            - "COURSE"
             - "EXAM"
             - "CONSULTATION"
+        rawType:
+          type: string
         place:
           type: string
         groups:
@@ -288,20 +265,6 @@ components:
           items:
             $ref: "#/components/schemas/Classes"
 
-    DayV1:
-      type: object
-      properties:
-        dayOfWeek:
-          type: integer
-          format: int32
-        date:
-          type: string
-          format: date
-        classes:
-          type: array
-          items:
-            $ref: "#/components/schemas/ClassesV1"
-
     Week:
       type: object
       properties:
@@ -318,23 +281,6 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Day"
-
-    WeekV1:
-      type: object
-      properties:
-        weekOfYear:
-          type: integer
-          format: int32
-        weekOfSemester:
-          type: integer
-          format: int32
-        firstDayOfWeek:
-          type: string
-          format: date
-        days:
-          type: array
-          items:
-            $ref: "#/components/schemas/DayV1"
 
     Schedule:
       type: object
@@ -364,7 +310,7 @@ components:
         weeks:
           type: array
           items:
-            $ref: "#/components/schemas/WeekV1"
+            $ref: "#/components/schemas/Week"
 
     GetGroupIdResponse:
       type: object
