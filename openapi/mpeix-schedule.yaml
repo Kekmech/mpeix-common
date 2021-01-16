@@ -13,6 +13,8 @@ info:
 tags:
   - name: group
     description: endpoints for group information
+  - name: person
+    description: endpoints for person information
   - name: system
     description: endpoints with system information
 paths:
@@ -72,25 +74,25 @@ paths:
       parameters:
         - name: groupNumber
           in: path
-          description: number of a group
+          description: Number of a group
           required: true
           schema:
             type: string
-            example: "А-01-16"
+            example: "А-08-20"
         - name: offset
           in: path
-          description: offset
+          description: Offset or range of offsets separated by a double dots. If you want to get the current week's schedule, pass offset equal to zero
           required: true
           schema:
-            type: integer
-            format: int32
+            type: string
+            example: "-1..1"
       responses:
         '200':
-          description: Schedule for a group
+          description: Schedule for a group, for weeks specified in offset
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Schedule'
+                $ref: '#/components/schemas/ScheduleV1'
         '422':
           description: Schedule not found
         '500':
@@ -109,10 +111,14 @@ paths:
           required: true
           schema:
             type: string
-            example: "А-01-16"
+            example: "А-08-20"
       responses:
         '200':
           description: Session schedule for a group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetSessionResponseV1'
         '422':
           description: Session schedule not found
         '500':
@@ -130,7 +136,7 @@ components:
           type: string
           example: 04:20:00
 
-    Class:
+    Classes:
       type: object
       properties:
         name:
@@ -155,6 +161,27 @@ components:
         time:
           $ref: "#/components/schemas/Time"
 
+    ClassesV1:
+      type: object
+      properties:
+        name:
+          type: string
+        typeName:
+          type: string
+        typeColor:
+          type: string
+        place:
+          type: string
+        groups:
+          type: string
+        person:
+          type: string
+        number:
+          type: integer
+          format: int32
+        time:
+          $ref: "#/components/schemas/Time"
+
     Day:
       type: object
       properties:
@@ -167,7 +194,21 @@ components:
         classes:
           type: array
           items:
-            $ref: "#/components/schemas/Class"
+            $ref: "#/components/schemas/Classes"
+
+    DayV1:
+      type: object
+      properties:
+        dayOfWeek:
+          type: integer
+          format: int32
+        date:
+          type: string
+          format: date
+        classes:
+          type: array
+          items:
+            $ref: "#/components/schemas/ClassesV1"
 
     Week:
       type: object
@@ -186,6 +227,23 @@ components:
           items:
             $ref: "#/components/schemas/Day"
 
+    WeekV1:
+      type: object
+      properties:
+        weekOfYear:
+          type: integer
+          format: int32
+        weekOfSemester:
+          type: integer
+          format: int32
+        firstDayOfWeek:
+          type: string
+          format: date
+        days:
+          type: array
+          items:
+            $ref: "#/components/schemas/DayV1"
+
     Schedule:
       type: object
       properties:
@@ -198,6 +256,18 @@ components:
           items:
             $ref: "#/components/schemas/Week"
 
+    ScheduleV1:
+      type: object
+      properties:
+        groupNumber:
+          type: string
+        groupId:
+          type: string
+        weeks:
+          type: array
+          items:
+            $ref: "#/components/schemas/WeekV1"
+
     GetGroupIdResponse:
       type: object
       properties:
@@ -207,6 +277,35 @@ components:
         groupId:
           type: string
           example: "9378"
+    
+    GetSessionResponseV1:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/SessionItemV1"
+
+    SessionItemV1:
+      type: object
+      properties:
+        name:
+          type: string
+        place:
+          type: string
+        person:
+          type: string
+        date:
+          type: string
+          format: date
+        time:
+          $ref: "#/components/schemas/Time"
+        type:
+          type: string
+          enum:
+            - "UNDEFINED"
+            - "EXAM"
+            - "CONSULTATION"
 
   requestBodies:
     GetGroupIdRequest:
