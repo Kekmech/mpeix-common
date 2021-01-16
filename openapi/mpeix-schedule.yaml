@@ -183,6 +183,32 @@ paths:
         '500':
           description: Internal server error
 
+  /v1/search?q={query}&type={type}:
+    get:
+      summary: SearchByQuery
+      description: Get a suitable list for autocomplete query
+      parameters:
+        - in: query
+          name: query
+          schema:
+            type: string
+            example: "Зуев"
+          description: Search query
+        - in: query
+          name: type
+          schema:
+            type: string
+            example: "GROUP"
+          description: Query filter
+      responses:
+        '200':
+          description: Suitable list for autocomplete
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchByQueryResponseV1'
+        '500':
+          description: Internal server error
 
 components:
   schemas:
@@ -367,6 +393,30 @@ components:
           type: string
         typeColor:
           type: string
+      
+    SearchByQueryResponseV1:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/AutocompleteItemV1"
+
+    AutocompleteItemV1:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        id:
+          type: integer
+          format: int32
+        type:
+          type: string
+          enum:
+            - "GROUP"
+            - "PERSON"
 
   requestBodies:
     GetGroupIdRequest:
