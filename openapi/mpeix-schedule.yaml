@@ -322,7 +322,7 @@ components:
         ownerName:
           type: string
           description: group number or person name
-        groupId:
+        ownerId:
           type: string
         isPerson:
           type: boolean
