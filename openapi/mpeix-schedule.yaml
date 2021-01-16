@@ -345,13 +345,16 @@ components:
     ScheduleV1:
       type: object
       properties:
-        ownerName:
+        name:
           type: string
           description: group number or person name
-        ownerId:
+        id:
           type: string
-        isPerson:
-          type: boolean
+        type:
+          type: string
+          enum:
+            - GROUP
+            - PERSON
         weeks:
           type: array
           items:
