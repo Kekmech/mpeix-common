@@ -363,12 +363,10 @@ components:
           format: date
         time:
           $ref: "#/components/schemas/Time"
-        type:
+        typeName:
           type: string
-          enum:
-            - "UNDEFINED"
-            - "EXAM"
-            - "CONSULTATION"
+        typeColor:
+          type: string
 
   requestBodies:
     GetGroupIdRequest:
