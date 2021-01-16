@@ -252,10 +252,16 @@ components:
       properties:
         name:
           type: string
-        typeName:
+        type:
           type: string
-        typeColor:
-          type: string
+          enum:
+            - "UNDEFINED"
+            - "LECTURE"
+            - "PRACTICE"
+            - "LAB"
+            - "COURSE"
+            - "EXAM"
+            - "CONSULTATION"
         place:
           type: string
         groups:
@@ -392,10 +398,12 @@ components:
           format: date
         time:
           $ref: "#/components/schemas/Time"
-        typeName:
+        type:
           type: string
-        typeColor:
-          type: string
+          enum:
+            - "UNDEFINED"
+            - "EXAM"
+            - "CONSULTATION"
       
     SearchByQueryResponseV1:
       type: object
