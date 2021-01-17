@@ -13,6 +13,8 @@ info:
 tags:
   - name: group
     description: endpoints for group information
+  - name: person
+    description: endpoints for person information
   - name: system
     description: endpoints with system information
 paths:
@@ -63,6 +65,19 @@ paths:
         '500':
           description: Service is unhealthy
 
+  /system/clearCache/{selector}/{secretKey}:
+    delete:
+      tags:
+        - system
+      summary: Only for internal use!
+      responses:
+        '200':
+          description: Sucesfully cleared cache
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+
   /v1/group/{groupNumber}/schedule/{offset}:
     get:
       tags:
@@ -72,25 +87,25 @@ paths:
       parameters:
         - name: groupNumber
           in: path
-          description: number of a group
+          description: Number of a group
           required: true
           schema:
             type: string
-            example: "А-01-16"
+            example: "А-08-20"
         - name: offset
           in: path
-          description: offset
+          description: Offset or range of offsets separated by a double dots. If you want to get the current week's schedule, pass offset equal to zero
           required: true
           schema:
-            type: integer
-            format: int32
+            type: string
+            example: "-1..1"
       responses:
         '200':
-          description: Schedule for a group
+          description: Schedule for a group, for weeks specified in offset
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Schedule'
+                $ref: '#/components/schemas/ScheduleV1'
         '422':
           description: Schedule not found
         '500':
@@ -109,12 +124,102 @@ paths:
           required: true
           schema:
             type: string
-            example: "А-01-16"
+            example: "А-08-20"
       responses:
         '200':
           description: Session schedule for a group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetSessionResponseV1'
         '422':
           description: Session schedule not found
+        '500':
+          description: Internal server error
+
+  /v1/person/{personName}/schedule/{offset}:
+    get:
+      tags:
+        - person
+      summary: GetScheduleByPersonName
+      description: Get a person schedule for group by group number
+      parameters:
+        - name: personName
+          in: path
+          description: Person name
+          required: true
+          schema:
+            type: string
+            example: "Зуев Юрий Юрьевич"
+        - name: offset
+          in: path
+          description: Offset or range of offsets separated by a double dots. If you want to get the current week's schedule, pass offset equal to zero
+          required: true
+          schema:
+            type: string
+            example: "-1..1"
+      responses:
+        '200':
+          description: Schedule for a person, for weeks specified in offset
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduleV1'
+        '422':
+          description: Schedule not found
+        '500':
+          description: Internal server error
+
+  /v1/person/{personName}/session:
+    get:
+      tags:
+        - person
+      summary: GetSessionByPersonName
+      description: Get a person session schedule for group by group number
+      parameters:
+        - name: personName
+          in: path
+          description: Person name
+          required: true
+          schema:
+            type: string
+            example: "Зуев Юрий Юрьевич"
+      responses:
+        '200':
+          description: Person session schedule for a group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetSessionResponseV1'
+        '422':
+          description: Session schedule not found
+        '500':
+          description: Internal server error
+
+  /v1/search:
+    get:
+      summary: SearchByQuery
+      description: Get a suitable list for autocomplete query
+      parameters:
+        - in: query
+          name: query
+          schema:
+            type: string
+            example: "Зуев"
+          description: Search query
+        - in: query
+          name: type
+          schema:
+            type: string
+            example: "GROUP"
+          description: Query filter
+      responses:
+        '200':
+          description: Suitable list for autocomplete
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchByQueryResponseV1'
         '500':
           description: Internal server error
 
@@ -130,7 +235,7 @@ components:
           type: string
           example: 04:20:00
 
-    Class:
+    Classes:
       type: object
       properties:
         name:
@@ -143,6 +248,10 @@ components:
             - "PRACTICE"
             - "LAB"
             - "COURSE"
+            - "EXAM"
+            - "CONSULTATION"
+        rawType:
+          type: string
         place:
           type: string
         groups:
@@ -167,7 +276,7 @@ components:
         classes:
           type: array
           items:
-            $ref: "#/components/schemas/Class"
+            $ref: "#/components/schemas/Classes"
 
     Week:
       type: object
@@ -198,6 +307,24 @@ components:
           items:
             $ref: "#/components/schemas/Week"
 
+    ScheduleV1:
+      type: object
+      properties:
+        name:
+          type: string
+          description: group number or person name
+        id:
+          type: string
+        type:
+          type: string
+          enum:
+            - GROUP
+            - PERSON
+        weeks:
+          type: array
+          items:
+            $ref: "#/components/schemas/Week"
+
     GetGroupIdResponse:
       type: object
       properties:
@@ -207,6 +334,59 @@ components:
         groupId:
           type: string
           example: "9378"
+    
+    GetSessionResponseV1:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/SessionItemV1"
+
+    SessionItemV1:
+      type: object
+      properties:
+        name:
+          type: string
+        place:
+          type: string
+        person:
+          type: string
+        date:
+          type: string
+          format: date
+        time:
+          $ref: "#/components/schemas/Time"
+        type:
+          type: string
+          enum:
+            - "UNDEFINED"
+            - "EXAM"
+            - "CONSULTATION"
+      
+    SearchByQueryResponseV1:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/AutocompleteItemV1"
+
+    AutocompleteItemV1:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        id:
+          type: integer
+          format: int32
+        type:
+          type: string
+          enum:
+            - "GROUP"
+            - "PERSON"
 
   requestBodies:
     GetGroupIdRequest:
