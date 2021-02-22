@@ -4,7 +4,7 @@ info:
   version: "1.0.0"
   title: Schedule
   contact:
-    name: KekMech
+    name: Kekmech
     url: https://vk.com/kekmech
   license:
     name: MIT
@@ -30,7 +30,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetGroupIdResponse'
-        '422':
+        '400':
           description: Group id not found
         '500':
           description: Internal server error
@@ -48,7 +48,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Schedule'
-        '422':
+        '400':
           description: Schedule not found
         '500':
           description: Internal server error
@@ -106,7 +106,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ScheduleV1'
-        '422':
+        '400':
           description: Schedule not found
         '500':
           description: Internal server error
@@ -132,7 +132,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetSessionResponseV1'
-        '422':
+        '400':
           description: Session schedule not found
         '500':
           description: Internal server error
@@ -165,7 +165,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ScheduleV1'
-        '422':
+        '400':
           description: Schedule not found
         '500':
           description: Internal server error
@@ -191,7 +191,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetSessionResponseV1'
-        '422':
+        '400':
           description: Session schedule not found
         '500':
           description: Internal server error
@@ -227,16 +227,27 @@ components:
   schemas:
     Time:
       type: object
+      required: ["start", "end"]
       properties:
         start:
           type: string
           example: 00:00:00
+          description: "LocalTime"
         end:
           type: string
           example: 04:20:00
+          description: "LocalTime"
 
     Classes:
       type: object
+      required:
+        - name
+        - type
+        - place
+        - groups
+        - person
+        - number
+        - time
       properties:
         name:
           type: string
@@ -266,6 +277,10 @@ components:
 
     Day:
       type: object
+      required:
+        - dayOfWeek
+        - date
+        - classes
       properties:
         dayOfWeek:
           type: integer
@@ -280,6 +295,11 @@ components:
 
     Week:
       type: object
+      required:
+        - weekOfYear
+        - weekOfSemester
+        - firstDayOfWeek
+        - days
       properties:
         weekOfYear:
           type: integer
@@ -297,6 +317,10 @@ components:
 
     Schedule:
       type: object
+      required:
+        - groupNumber
+        - groupId
+        - weeks
       properties:
         groupNumber:
           type: string
@@ -309,6 +333,11 @@ components:
 
     ScheduleV1:
       type: object
+      required:
+        - name
+        - id
+        - type
+        - weeks
       properties:
         name:
           type: string
@@ -366,6 +395,7 @@ components:
       
     SearchByQueryResponseV1:
       type: object
+      required: ["items"]
       properties:
         items:
           type: array
@@ -374,6 +404,11 @@ components:
 
     AutocompleteItemV1:
       type: object
+      required:
+        - name
+        - description
+        - id
+        - type
       properties:
         name:
           type: string
