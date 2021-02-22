@@ -1,0 +1,88 @@
+openapi: 3.0.0
+info:
+  description: Mpeix microservice responsible for news, posts on social networks, developer requests and other text information from available sources 
+  version: "1.0.0"
+  title: Feed
+  contact:
+    name: Kekmech
+    url: https://vk.com/kekmech
+  license:
+    name: MIT
+    url: 'https://opensource.org/licenses/MIT'
+
+tags:
+  - name: feed
+    description: feed with all content types
+  - name: system
+    description: endpoints with system information
+paths:
+  /v1/feed:
+    get:
+      tags:
+        - feed
+      summary: Get news feed
+      parameters:
+        - name: offset
+          in: query
+          schema:
+            type: string
+            example: "21-05-2021T18:30:21+03:00"
+          description: "ZonedDateTime"
+        - name: filter
+          in: query
+          description: Filter feed items by type
+      responses:
+        '200':
+          description: Found map markers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetFeedResponse'
+        '500':
+          description: Internal server error
+
+  /system/health:
+    get:
+      tags:
+        - system
+      summary: will check service is healthy or not
+      responses:
+        '200':
+          description: Service is healthy
+        '500':
+          description: Service is unhealthy
+
+components:
+  schemas:
+    GetFeedResponse:
+      type: object
+      required:
+        - id
+        - contentType
+      properties:
+        id:
+          type: string
+        contentType:
+          type: string
+          enum:
+            - "DEVELOPER_NEWS"
+            - "UNIVERSITY_NEWS"
+            - "VK_STUDENTS"
+
+  requestBodies:
+    MapMarkerRequest:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              uid:
+                type: string
+              address:
+                type: string
+              name:
+                type: string
+              icon:
+                type: string
+              tag:
+                type: string
